@@ -1,5 +1,3 @@
-// FormalElement.cpp : This file contains the 'main' function. Program execution begins and ends there.
-//
 #include <map>
 #include <fstream>
 #include <sstream>
@@ -15,52 +13,85 @@ struct cacheEntry
     bool LRU;
     bool invalid;
     uint16_t tag;
-    char bytes[4];
+    char data[4];
 };
 
-class cache
+class Cache
 {
 public:
-    cache()
+    Cache(int size)
     {
-        entries = new cacheEntry[cacheSize];
+        entries = new cacheEntry[size];
         hit = 0;
         miss = 0;
+        // Initialize the cache
+        for (int i = 0; i < size; i++)
+        {
+            entries[i].LRU = false;
+            entries[i].invalid = true;
+        }
     }
-    ~cache()
+    ~Cache()
     {
         delete entries;
     }
-    int getHit()
+    void incHit() { hit++; }
+    void incMiss() { miss++; }
+    int getHit() { return hit; }
+    int getMiss() { return miss; }
+
+    cacheEntry getEntry(uint32_t set) { return entries[set]; }
+    void setTag(uint32_t set, uint32_t tag)
     {
-        return hit;
+        entries[set].tag = tag;
     }
-    int getMiss()
+    void toggleInvalid(uint32_t set)
     {
-        return miss;
+        entries[set].invalid = !entries[set].invalid;
     }
-    int readAddr(uint16_t tag, uint16_t set, uint8_t word)
+    void toggleLRU(uint32_t set)
     {
-        for (int i = 0; i < cacheSize; i++){
-            if (entries[i].tag == tag && entries[i].invalid){
-                // entries[i]
-            }
-        }
+        entries[set].LRU = !entries[set].LRU;
     }
-    cacheEntry *entries;
 
 private:
     int hit, miss;
+    cacheEntry *entries;
 };
 
-int main()
+class DirectMapCache : public Cache
 {
-    cache directM;
-    //init invalid to true
-    for (int i = 0; i < cacheSize; i++)
+public:
+    DirectMapCache() : Cache(16384){};
+
+    void read(uint32_t address)
     {
-        directM.entries[i].invalid = true;
+        uint16_t tag = (address & tagMask) >> 16;
+        uint16_t set = (address & setMask) >> 2;
+        uint8_t word = (address & wordMask);
+        printf("Read: %x\n", address);
+        printf("Tag: %x\n", tag);
+        printf("Set: %x\n", set);
+        printf("Byte Number: %x\n", word);
+        // Check if the cache is valid
+        if (!getEntry(set).invalid && getEntry(set).tag == tag)
+        {
+            incHit();
+        }
+        else
+        {
+            incMiss();
+            // Update the cache
+            setTag(set, tag);
+            toggleInvalid(set);
+            toggleLRU(set);
+        }
     }
+};
+
+main()
+{
+    DirectMapCache directMap;
 
     std::ifstream cpuAddr;
     cpuAddr.open("CPUaddr.txt");
@@ -68,10 +99,10 @@ int main()
 
     while (cpuAddr >> std::hex >> addr)
     {
-        uint16_t tag = (addr & tagMask) >> 16;
-        uint16_t set = (addr & setMask) >> 2;
-        uint8_t word = (addr & wordMask);
+        directMap.read(addr);
     };
+    std::cout << directMap.getHit() << std::endl;
+    std::cout << directMap.getMiss() << std::endl;
 
     return 0;
 }
