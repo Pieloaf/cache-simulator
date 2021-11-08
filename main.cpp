@@ -1,4 +1,3 @@
-#include <map>
 #include <fstream>
 #include <sstream>
 #include <iostream>
@@ -7,6 +6,7 @@
 #define setMask 0x0000FFFC
 #define wordMask 0x00000003
 #define tagMask 0xFFFF0000
+#define fullAssocMask 0xFFFFFFFC
 
 struct cacheEntry
 {
@@ -35,6 +35,20 @@ public:
     {
         delete entries;
     }
+
+    void read(uint32_t address, uint16_t *tag, uint16_t *set, uint8_t *word)
+    {
+        *tag = (address & tagMask) >> 16;
+        *set = (address & setMask) >> 2;
+        *word = (address & wordMask);
+        printf("Address: %x\n"
+               "Tag: %x\n"
+               "Set: %x\n"
+               "Byte Number: %x\n"
+               "------------\n",
+               address, *tag, *set, *word);
+    }
+
     void incHit() { hit++; }
     void incMiss() { miss++; }
     int getHit() { return hit; }
@@ -45,13 +59,9 @@ public:
     {
         entries[set].tag = tag;
     }
-    void toggleInvalid(uint32_t set)
+    void setInvalid(uint32_t set, bool state)
     {
-        entries[set].invalid = !entries[set].invalid;
-    }
-    void toggleLRU(uint32_t set)
-    {
-        entries[set].LRU = !entries[set].LRU;
+        entries[set].invalid = state;
     }
 
 private:
@@ -66,13 +76,9 @@ public:
 
     void read(uint32_t address)
     {
-        uint16_t tag = (address & tagMask) >> 16;
-        uint16_t set = (address & setMask) >> 2;
-        uint8_t word = (address & wordMask);
-        printf("Read: %x\n", address);
-        printf("Tag: %x\n", tag);
-        printf("Set: %x\n", set);
-        printf("Byte Number: %x\n", word);
+        uint16_t tag, set;
+        uint8_t word;
+        Cache::read(address, &tag, &set, &word);
         // Check if the cache is valid
         if (!getEntry(set).invalid && getEntry(set).tag == tag)
         {
@@ -83,8 +89,78 @@ public:
             incMiss();
             // Update the cache
             setTag(set, tag);
-            toggleInvalid(set);
-            toggleLRU(set);
+            setInvalid(set, false);
+            // toggleLRU(set);
+        }
+    }
+};
+
+class FullyAssociativeCache : public Cache
+{
+public:
+    FullyAssociativeCache() : Cache(16384){};
+
+    void read(uint32_t address)
+    {
+
+        uint32_t tag = (address & fullAssocMask) >> 16;
+        uint8_t word = address & wordMask;
+        // Check if the cache is valid
+        for (int i = 0; i < cacheSize; i++)
+        {
+            if (getEntry(i).tag == tag)
+            {
+                if (!getEntry(i).invalid)
+                {
+                    incHit();
+                }
+                else
+                {
+                    incMiss();
+                    //read from memory here
+                    setInvalid(i, false);
+                }
+                break;
+            }
+            else if (i == cacheSize - 1)
+            {
+                incMiss();
+                for (int j = 0; j < cacheSize; j++)
+                {
+                    if (getEntry(j).LRU)
+                    {
+                        setTag(j, tag);
+                        setInvalid(j, false);
+                        break;
+                    }
+                }
+            }
+        }
+    }
+};
+
+class SetAssociativeCache : public Cache
+{
+public:
+    SetAssociativeCache() : Cache(16384){};
+
+    void read(uint32_t address)
+    {
+        uint16_t tag, set;
+        uint8_t word;
+        Cache::read(address, &tag, &set, &word);
+        // Check if the cache is valid
+        if (!getEntry(set).invalid && getEntry(set).tag == tag)
+        {
+            incHit();
+        }
+        else
+        {
+            incMiss();
+            // Update the cache
+            setTag(set, tag);
+            setInvalid(set, false);
+            // toggleLRU(set);
         }
     }
 };
@@ -101,8 +177,8 @@ main()
     {
         directMap.read(addr);
     };
-    std::cout << directMap.getHit() << std::endl;
-    std::cout << directMap.getMiss() << std::endl;
+    std::cout << "Hits:" << directMap.getHit() << std::endl;
+    std::cout << "Misses: " << directMap.getMiss() << std::endl;
 
     return 0;
 }
