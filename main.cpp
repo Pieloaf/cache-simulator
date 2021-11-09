@@ -1,15 +1,9 @@
 #include <fstream>
 #include <sstream>
 #include <iostream>
-#include "./headers/cache.hpp"
 #include "./headers/directMap.hpp"
 #include "./headers/fullyAssoc.hpp"
 #include "./headers/setAssoc.hpp"
-
-#define cacheSize 16384
-#define setMask 0x0000FFFC
-#define wordMask 0x00000003
-#define tagMask 0xFFFF0000
 
 main()
 {
