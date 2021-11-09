@@ -1,0 +1,1 @@
+g++ -I ./headers/ main.cpp ./source/*.cpp -o ./build/%1
