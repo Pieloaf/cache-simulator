@@ -9,11 +9,12 @@ class TwoWaySetAssociative : public Cache
 {
 public:
     TwoWaySetAssociative();
-
+    ~TwoWaySetAssociative();
     void read(uint32_t address);
 
 private:
-    int ways;
+    const int ways = 2;
+    cacheEntry (*entries)[cacheSize];
 };
 
 #endif

@@ -1,6 +1,22 @@
 #include "../headers/setAssoc.hpp"
 
-TwoWaySetAssociative::TwoWaySetAssociative() : ways(2), Cache(2){};
+TwoWaySetAssociative::TwoWaySetAssociative(){
+    entries = new cacheEntry[ways][cacheSize];
+    // Initialize the cache
+    for (int w = 0; w < ways; w++)
+    {
+        for (int i = 0; i < cacheSize; i++)
+        {
+            entries[w][i].LRU = true;
+            entries[w][i].invalid = true;
+        }
+    }
+};
+
+TwoWaySetAssociative::~TwoWaySetAssociative()
+{
+    delete[] entries;
+}
 
 void TwoWaySetAssociative::read(uint32_t address)
 {
@@ -10,16 +26,22 @@ void TwoWaySetAssociative::read(uint32_t address)
     // Check if the cache is valid
     for (int i = 0; i < ways; i++)
     {
-        printf("Checking way %d\n", i);
-        if (!getEntry(i, set).invalid && getEntry(i, set).tag == tag)
+        if (entries[i][set].tag == tag)
         {
-            incHit();
+            if (!entries[i][set].invalid)
+            {
+                incHit();
+            }
+            else
+            {
+                incMiss();
+            }
             //if LRU, update the LRU
-            if (getEntry(i, set).LRU)
+            if (entries[i][set].LRU)
             {
                 for (int k = 0; k < ways; k++)
                 {
-                    setLRU(k, set, !getEntry(k, set).LRU);
+                    entries[k][set].LRU = !getEntry(k, set).LRU;
                 }
             }
             break;
@@ -30,14 +52,12 @@ void TwoWaySetAssociative::read(uint32_t address)
 
             for (int j = 0; j < ways; j++)
             {
-                printf("way %d lru state: %d\n", j, getEntry(j, set).LRU);
-                if (getEntry(j, set).LRU)
+                if (entries[j][set].LRU)
                 {
-                    printf("LRU way %d\n", j);
-                    setTag(j, set, tag);
-                    setInvalid(j, set, false);
-                    setLRU(j, set, false);
-                    setLRU(!j, set, true);
+                    entries[j][set].tag = tag;;
+                    entries[j][set].invalid =  false;
+                    entries[j][set].LRU = false;
+                    entries[!j][set].LRU = true;
                     break;
                 }
             }

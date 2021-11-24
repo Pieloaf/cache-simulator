@@ -1,18 +1,31 @@
 #include "../headers/fullyAssoc.hpp"
 
-FullyAssociative::FullyAssociative() : Cache(1) {}
+FullyAssociative::FullyAssociative()
+{
+    cIndex = 0;
+    entries = new cacheEntry[cacheSize];
+    for (int i = 0; i < cacheSize; i++)
+    {
+        entries[i].invalid = true;
+    }
+}
+
+FullyAssociative::~FullyAssociative()
+{
+    delete[] entries;
+}
 
 void FullyAssociative::read(uint32_t address)
 {
-
-    uint32_t tag = (address & fullAssocMask) >> 16;
+    bool found = false;
+    uint32_t tag = (address & fullAssocMask) >> 2;
     uint8_t word = address & wordMask;
     // Check if the cache is valid
     for (int i = 0; i < cacheSize; i++)
     {
-        if (getEntry(0, i).tag == tag)
+        if (entries[i].tag == tag)
         {
-            if (!getEntry(0, i).invalid)
+            if (!entries[i].invalid)
             {
                 incHit();
             }
@@ -20,21 +33,35 @@ void FullyAssociative::read(uint32_t address)
             {
                 incMiss();
                 //read from memory here
-                setInvalid(0, i, false);
+                entries[i].invalid = false;
             }
+            found = true;
             break;
         }
-        else if (i == cacheSize - 1)
+    }
+    if (!found)
+    {
+        incMiss();
+        //read from memory here
+        //fifo replacement
+        if (!cIndex == cacheSize - 1)
         {
-            incMiss();
-            for (int j = 0; j < cacheSize; j++)
+            entries[cIndex].tag = tag;
+            entries[cIndex].invalid = false;
+            cIndex++;
+        }
+        else
+        {
+            for (int i = 0; i < cacheSize; i++)
             {
-                if (getEntry(0, j).LRU)
+                if (i == cacheSize - 1)
                 {
-                    setTag(0, j, tag);
-                    //read from memory here
-                    setInvalid(0, j, false);
-                    break;
+                    entries[i].tag = tag;
+                    entries[i].invalid = false;
+                }
+                else
+                {
+                    entries[i] = entries[i + 1];
                 }
             }
         }

@@ -13,16 +13,16 @@
 
 struct cacheEntry
 {
-    bool LRU;
-    bool invalid;
-    uint16_t tag;
-    char data[4];
+    bool LRU; // Least Recently Used
+    bool invalid; // valid bit
+    uint16_t tag; // 16 bit tag
+    char data[4]; // array of 4 bytes - cache line
 };
 
 class Cache
 {
 public:
-    Cache(int way);
+    Cache();
     ~Cache();
 
     void read(uint32_t address, uint16_t *tag, uint16_t *set, uint8_t *word);
@@ -40,7 +40,6 @@ public:
 
 private:
     int hit, miss;
-    cacheEntry (*entries)[cacheSize];
 };
 
 #endif

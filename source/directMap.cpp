@@ -1,6 +1,16 @@
 #include "../headers/directMap.hpp"
 
-DirectMap::DirectMap() : Cache(1){};
+DirectMap::DirectMap(){
+    entries = new cacheEntry[cacheSize];
+    for (int i = 0; i < cacheSize; i++)
+    {
+        entries[i].invalid = true;
+    }
+};
+
+DirectMap::~DirectMap(){
+    delete[] entries;
+}
 
 void DirectMap::read(uint32_t address)
 {
@@ -8,7 +18,7 @@ void DirectMap::read(uint32_t address)
     uint8_t word;
     Cache::read(address, &tag, &set, &word);
     // Check if the cache is valid
-    if (!getEntry((uint8_t)0, set).invalid && getEntry(0, set).tag == tag)
+    if (!entries[set].invalid && entries[set].tag == tag)
     {
         incHit();
     }
@@ -16,7 +26,7 @@ void DirectMap::read(uint32_t address)
     {
         incMiss();
         // Update the cache
-        setTag(0, set, tag);
-        setInvalid(0, set, false);
+        entries[set].tag = tag;
+        entries[set].invalid = false;
     }
 }
