@@ -76,7 +76,7 @@ void FullyAssociative::read(uint32_t address)
         //Update the cache with the new data from memory
         //fifo replacement policy
         //if the cache is not full
-        if (!cIndex == cacheSize - 1)
+        if (cIndex < cacheSize - 1)
         {
             //
             //write the new data from memory to the cache
