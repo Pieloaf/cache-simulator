@@ -1,0 +1,52 @@
+@startuml Cache Simulator
+class   "Cache" as c
+class   "DirectMap" as dm
+class   "Fully Associative" as fa
+class   "TwoWaySetAssociative" as sa
+object  "cacheEntry" as ce
+object  "cacheEntry" as FaCe
+
+c <|-- dm
+c <|-- fa
+c <|-- sa
+c *- ce
+fa *-- FaCe
+
+c : -hit : int
+c : -miss : int
+c : +Cache()
+c : +~Cache()
+c : +getHit() : int
+c : +getMiss() : int
+c : +incHit() : void
+c : +incMiss() : void
+c : {abstract} + read(uint32_t address) : void
+c : +parseAddr(uint32_t address, uint16_t *tag, uint16_t *set, uint8_t *word) : void
+
+fa : +FullyAssociative();
+fa : +~FullyAssociative();
+fa : +read(uint32_t address) : void
+fa : -cIndex : int
+fa : -entries : cacheEntry* [ ]
+
+dm : +DirectMap();
+dm : +~DirectMap();
+dm : +read(uint32_t address) : void
+dm : -entries : cacheEntry* [ ]
+
+sa : +TwoWaySetAssociative();
+sa : +~TwoWaySetAssociative();
+sa : +read(uint32_t address) : void
+sa : -ways : int
+sa : -entries: cacheEntry* [ ][cacheSize] 
+
+ce : tag : uint16_t
+ce : invalid : bool
+ce : LRU : bool
+ce : data : char[4]
+
+FaCe : tag : uint32_t
+FaCe : invalid : bool
+FaCe : data : char[4]
+
+@enduml
