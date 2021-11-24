@@ -6,39 +6,39 @@
 #include <stdint.h>
 #include <stdio.h>
 
-#define cacheSize 16384
-#define setMask 0x0000FFFC
-#define wordMask 0x00000003
-#define tagMask 0xFFFF0000
-
-struct cacheEntry
-{
-    bool LRU; // Least Recently Used
-    bool invalid; // valid bit
-    uint16_t tag; // 16 bit tag
-    char data[4]; // array of 4 bytes - cache line
-};
+#define cacheSize 16384     //cache size of 16KB (14 bit set number)
+#define setMask 0x0000FFFC  //mask to isolate 14 bits of the address following the first 2 bits
+#define wordMask 0x00000003 //mask to isolate the first 2 bits of the address
+#define tagMask 0xFFFF0000  //mask to isolate the last 16 bits of the address
 
 class Cache
 {
 public:
-    Cache();
-    ~Cache();
+    Cache();    //definition of the constructor
+    ~Cache(){}; //implementation of the destructor
 
-    void read(uint32_t address, uint16_t *tag, uint16_t *set, uint8_t *word);
+    //definition of the parse address function
+    void parseAddr(uint32_t address, uint16_t *tag, uint16_t *set, uint8_t *word);
 
-    void incHit();
-    void incMiss();
-    int getHit();
-    int getMiss();
+    //definition of the purely virtual read function (to be implemented in the derived classes)
+    virtual void read(uint32_t address) = 0;
 
-    cacheEntry getEntry(uint8_t way, uint32_t set);
+    void incHit();  //definition of the function to increment the hit counter
+    void incMiss(); //definition of the function to increment the miss counter
+    int getHit();   //definition of the function to return the hit counter
+    int getMiss();  //definition of the function to return the miss counter
 
-    void setTag(uint8_t way, uint32_t set, uint32_t tag);
-    void setInvalid(uint8_t way, uint32_t set, bool state);
-    void setLRU(uint8_t way, uint32_t set, bool state);
+    //definiiton of the cacheEntry struct (represents a single entry in the cache, to be used in the cache array)
+    struct cacheEntry
+    {
+        bool LRU;     // least recently used flag (used for LRU replacement policy, this only works for 2-way set associative caches)
+        bool invalid; // valid flag (deteremines if the cache entry is valid or not)
+        uint16_t tag; // 16 bit tag (to accomodate for 14 bit tags)
+        char data[4]; // array of 4 bytes (representing a cache line)
+    };
 
 private:
+    //definition hit and miss counters
     int hit, miss;
 };
 

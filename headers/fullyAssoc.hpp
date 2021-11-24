@@ -5,28 +5,29 @@
 
 #include <vector>
 #include "cache.hpp"
-#define fullAssocMask 0xFFFFFFFC
+#define fullAssocMask 0xFFFFFFFC //mask to isolate the first 30 bits of the address
 
-struct cacheEntry
-{
-    bool LRU; // Least Recently Used
-    bool invalid; // valid bit
-    uint32_t tag; // 32 bit tag because 
-    char data[4]; // array of 4 bytes - cache line
-};
-
-
-class FullyAssociative : public Cache
+class FullyAssociative : public Cache //inherits from Cache base class
 {
 public:
-    FullyAssociative();
-    ~FullyAssociative();
+    FullyAssociative();  //definition of the constructor
+    ~FullyAssociative(); //definition of the destructor
 
+    //definition of the read function (overriding the one in the base class)
+    //called on every read access to the cache
     void read(uint32_t address);
-    
+
+    //definition of the cacheEntry struct (overriding the one in the base class)
+    struct cacheEntry
+    {
+        bool invalid; // valid flag (deteremines if the cache entry is valid or not)
+        uint32_t tag; // 32 bit tag (to accomodate for 30 bit tags)
+        char data[4]; // array of 4 bytes (representing a cache line)
+    };
+
 private:
-    cacheEntry *entries;
-    int cIndex;
+    cacheEntry *entries; //pointer to the array of cache entries
+    int cIndex;          //index of the next empty cache entry
 };
 
 #endif

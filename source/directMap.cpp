@@ -1,32 +1,54 @@
 #include "../headers/directMap.hpp"
 
-DirectMap::DirectMap(){
+//implementation of the overridden default constructor
+DirectMap::DirectMap()
+{
+    // Initialize the cache
     entries = new cacheEntry[cacheSize];
     for (int i = 0; i < cacheSize; i++)
     {
-        entries[i].invalid = true;
+        entries[i].invalid = true; //set all entries to invalid
     }
 };
 
-DirectMap::~DirectMap(){
+//implementation of the overridden default destructor
+DirectMap::~DirectMap()
+{
+    //Delete the cache
+    //delete needs to be used as the cache entries are dynamically allocated
     delete[] entries;
 }
 
+//implementation of the read function (overriding the one in the base class)
+//called on every read access to the cache
 void DirectMap::read(uint32_t address)
 {
-    uint16_t tag, set;
-    uint8_t word;
-    Cache::read(address, &tag, &set, &word);
-    // Check if the cache is valid
+    uint16_t tag, set; //defining 16 bit ints for the tag and set
+    uint8_t word;      //defining a byte for the word
+
+    //calling parse address from base class to extract the tag, set, and word
+    parseAddr(address, &tag, &set, &word);
+
+    //check if the cache entry is valid and the tag matches
     if (!entries[set].invalid && entries[set].tag == tag)
     {
-        incHit();
+        incHit(); //increment the hit count
     }
+    //if either the tag doesnt match or the entry is invalid
     else
     {
-        incMiss();
-        // Update the cache
-        entries[set].tag = tag;
-        entries[set].invalid = false;
+        incMiss(); //increment the miss count
+
+        //
+        //read from memory
+        //
+        //write the new data from memory to the cache
+        //
+        //entries[set].data[word] = data from memory
+        //
+
+        //update the cache entry with the new data from memory
+        entries[set].tag = tag;       //update the entry's tag
+        entries[set].invalid = false; //set the entry to valid
     }
 }
