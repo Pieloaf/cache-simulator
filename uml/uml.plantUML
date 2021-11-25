@@ -20,25 +20,34 @@ c : +getHit() : int
 c : +getMiss() : int
 c : +incHit() : void
 c : +incMiss() : void
-c : {abstract} + read(uint32_t address) : void
-c : +parseAddr(uint32_t address, uint16_t *tag, uint16_t *set, uint8_t *word) : void
+c : {abstract} + read(uint32_t) : void
+c : {abstract} + detailedPrint() : void
+c : {abstract} + getType() : char *
+c : +parseAddr(uint32_t, uint16_t *, uint16_t *, uint8_t *) : void
+c : -printReadResult(char *) : void
 
 fa : +FullyAssociative();
 fa : +~FullyAssociative();
-fa : +read(uint32_t address) : void
+fa : +read(uint32_t) : void
+fa : +detailedPrint() : void
+fa : +getType() : char *
 fa : -cIndex : int
 fa : -entries : cacheEntry* [ ]
 
 dm : +DirectMap();
 dm : +~DirectMap();
-dm : +read(uint32_t address) : void
+dm : +read(uint32_t) : void
+dm : +detailedPrint() : void
+dm : +getType() : char *
 dm : -entries : cacheEntry* [ ]
 
 sa : +TwoWaySetAssociative();
 sa : +~TwoWaySetAssociative();
-sa : +read(uint32_t address) : void
+sa : +read(uint32_t) : void
+sa : +detailedPrint() : void
+sa : +getType() : char *
 sa : -ways : int
-sa : -entries: cacheEntry* [ ][cacheSize] 
+sa : -entries: cacheEntry* [ ][ ] 
 
 ce : tag : uint16_t
 ce : invalid : bool
