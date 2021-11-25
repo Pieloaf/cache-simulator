@@ -128,8 +128,8 @@ void TwoWaySetAssociative::detailedPrint()
            "==============================\n"
            "Cache Size: %dkB\n"
            "Line Size: %dB\n"
-           "# Lines: %d\n"
-           "# Sets: %d\n\n",
+           "# of Lines: %d\n"
+           "# of Sets: %d\n\n",
            (cacheSize * bpl * ways) / 1024, //calculate cache size and convert to kb
            bpl,                             //bytes per line
            cacheSize * ways,                //number of lines

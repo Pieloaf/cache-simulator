@@ -107,8 +107,8 @@ void FullyAssociative::detailedPrint()
            "========================\n"
            "Cache Size: %dkB\n"
            "Line Size: %dB\n"
-           "# Lines: %d\n"
-           "# Sets: %d\n",
+           "# of Lines: %d\n"
+           "# of Sets: %d\n",
            (cacheSize * bpl) / 1024, //calculate cache size and convert to kb
            bpl,                      //bytes per line
            cacheSize,                //number of lines
