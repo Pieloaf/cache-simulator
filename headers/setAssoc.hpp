@@ -19,7 +19,7 @@ public:
     void detailedPrint();
 
     //implementation to return the cache type (overriding the one in the base class)
-    char *getType() { return "Two Way Set Associative"; };
+    char *getType() { return (char *)"Two Way Set Associative"; };
 
 private:
     //number of ways in the cache

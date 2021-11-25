@@ -20,7 +20,7 @@ public:
     void detailedPrint();
 
     //implementation to return the cache type (overriding the one in the base class)
-    char *getType() { return "Fully Associative"; };
+    char *getType() { return (char *)"Fully Associative"; };
 
     //definition of the cacheEntry struct (overriding the one in the base class)
     struct cacheEntry

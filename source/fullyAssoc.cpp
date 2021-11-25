@@ -77,44 +77,21 @@ void FullyAssociative::read(uint32_t address)
         //read from memory
         //
 
-        //Update the cache with the new data from memory
-        //fifo replacement policy
-        //if the cache is not full
+        //
+        //write the new data from memory to the cache
+        //
+        //entries[cIndex].data[word] = data from memory;
+        //
+
+        entries[cIndex].tag = tag;       //add the new entry to the next position in the cache
+        entries[cIndex].invalid = false; //set the new entry to valid
         if (cIndex < cacheSize - 1)
         {
-            //
-            //write the new data from memory to the cache
-            //
-            //entries[cIndex].data[word] = data from memory;
-            //
-
-            entries[cIndex].tag = tag;       //add the new entry to the next position in the cache
-            entries[cIndex].invalid = false; //set the new entry to valid
-            cIndex++;                        //increment the cache index
+            cIndex++; //increment the cache index
         }
         else //if the cache is full
         {
-            //iterate through the cache
-            for (int i = 0; i < cacheSize; i++)
-            {
-                if (!i == cacheSize - 1) //if not the end of the cache
-                {
-                    entries[i] = entries[i + 1]; //replace the entry with the following entry
-                }
-                else //on the last entry in the cache
-                {
-
-                    //
-                    //write the new data from memory to the cache
-                    //
-                    //entries[i].data[word] = data from memory;
-                    //
-
-                    //replace the entry with the new entry
-                    entries[i].tag = tag;       //set the tag to the new tag
-                    entries[i].invalid = false; //set the entry to valid
-                }
-            }
+            cIndex = 0; //reset the cache index
         }
     }
 }

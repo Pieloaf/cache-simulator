@@ -19,7 +19,7 @@ public:
     void detailedPrint();
 
     //implementation to return the cache type (overriding the one in the base class)
-    char *getType() { return "Direct Map"; };
+    char *getType() { return (char *)"Direct Map"; };
 
 private:
     cacheEntry *entries; //pointer to the array of cache entries
