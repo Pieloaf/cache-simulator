@@ -20,8 +20,10 @@ public:
     //definition of the parse address function
     void parseAddr(uint32_t address, uint16_t *tag, uint16_t *set, uint8_t *word);
 
-    //definition of the purely virtual read function (to be implemented in the derived classes)
+    //definition of the purely virtual functions (to be implemented in the derived classes)
     virtual void read(uint32_t address) = 0;
+    virtual void detailedPrint() = 0;
+    virtual char *getType() = 0;
 
     void incHit();  //definition of the function to increment the hit counter
     void incMiss(); //definition of the function to increment the miss counter
@@ -40,6 +42,9 @@ public:
 private:
     //definition hit and miss counters
     int hit, miss;
+
+    //definition of the function to print the result of a read operation
+    void printReadResult(char *result);
 };
 
 #endif

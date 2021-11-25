@@ -30,6 +30,10 @@ void FullyAssociative::read(uint32_t address)
 
     uint32_t tag = (address & fullAssocMask) >> 2; //extract the tag from the address
     uint8_t word = address & wordMask;             //extract the word from the address
+    printf("Address: %x | "
+           "Tag: %x | "
+           "Byte Number: %x\n",
+           address, tag, word);
 
     // itterate through the cache
     for (int i = 0; i < cacheSize; i++)
@@ -113,4 +117,23 @@ void FullyAssociative::read(uint32_t address)
             }
         }
     }
+}
+
+//implementation of the detailed print function (overriding the one in the base class)
+void FullyAssociative::detailedPrint()
+{
+    //caclulating number of bytes per line
+    int bpl = (sizeof(entries[0].data) / sizeof(entries[0].data[0]));
+
+    //print cache details
+    printf("Fully Associative Cache\n"
+           "========================\n"
+           "Cache Size: %dkB\n"
+           "Line Size: %dB\n"
+           "# Lines: %d\n"
+           "# Sets: %d\n",
+           (cacheSize * bpl) / 1024, //calculate cache size and convert to kb
+           bpl,                      //bytes per line
+           cacheSize,                //number of lines
+           1);                       //number of sets
 }

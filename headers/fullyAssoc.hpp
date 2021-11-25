@@ -3,7 +3,6 @@
 #ifndef FULLY_ASSOC_HPP
 #define FULLY_ASSOC_HPP
 
-#include <vector>
 #include "cache.hpp"
 #define fullAssocMask 0xFFFFFFFC //mask to isolate the first 30 bits of the address
 
@@ -16,6 +15,12 @@ public:
     //definition of the read function (overriding the one in the base class)
     //called on every read access to the cache
     void read(uint32_t address);
+
+    //definition of the detailed print function (overriding the one in the base class)
+    void detailedPrint();
+
+    //implementation to return the cache type (overriding the one in the base class)
+    char *getType() { return "Fully Associative"; };
 
     //definition of the cacheEntry struct (overriding the one in the base class)
     struct cacheEntry

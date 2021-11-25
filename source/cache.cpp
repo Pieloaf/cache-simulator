@@ -26,14 +26,27 @@ void Cache::parseAddr(uint32_t address, uint16_t *tag, uint16_t *set, uint8_t *w
 void Cache::incHit()
 {
     hit++; //increment the hit counter
-    //on each hit, print the new hit count
-    printf("Hit: %d\n", hit);
+
+    //print the result of the read operation
+    printReadResult((char *)"Hit");
 }
+
+//implementation of the increment miss function
 void Cache::incMiss()
 {
     miss++; //increment the miss counter
-    //on each miss, print the new miss count
-    printf("Miss: %d\n", miss);
+
+    //print the result of the read operation
+    printReadResult((char *)"Miss");
 }
 int Cache::getHit() { return hit; }   //return the hit counter
 int Cache::getMiss() { return miss; } //return the miss counter
+
+//implementation of the function to print the result of a read operation
+void Cache::printReadResult(char *result)
+{
+    //print the result of the read operation along with the hit and miss counters
+    printf("Cache %s!\n"
+           "Hits: %d | Misses: %d\n",
+           result, hit, miss);
+}

@@ -52,3 +52,22 @@ void DirectMap::read(uint32_t address)
         entries[set].invalid = false; //set the entry to valid
     }
 }
+
+//implementation of the detailed print function (overriding the one in the base class)
+void DirectMap::detailedPrint()
+{
+    //caclulating number of bytes per line
+    int bpl = (sizeof(entries[0].data) / sizeof(entries[0].data[0]));
+
+    //print cache details
+    printf("Direct Map Cache\n"
+           "=================\n"
+           "Cache Size: %dkB\n"
+           "Line Size: %dB\n"
+           "# Lines: %d\n"
+           "# Sets: %d\n\n",
+           (cacheSize * bpl) / 1024, //calculate cache size and convert to kb
+           bpl,                      //bytes per line
+           cacheSize,                //number of lines
+           cacheSize);               //number of sets
+}

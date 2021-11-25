@@ -116,3 +116,22 @@ void TwoWaySetAssociative::read(uint32_t address)
         }
     }
 }
+
+//implementation of the detailed print function (overriding the one in the base class)
+void TwoWaySetAssociative::detailedPrint()
+{
+    //caclulating number of bytes per line
+    int bpl = (sizeof(entries[0][0].data) / sizeof(entries[0][0].data[0]));
+
+    //print cache details
+    printf("Two Way Set Associative Cache\n"
+           "==============================\n"
+           "Cache Size: %dkB\n"
+           "Line Size: %dB\n"
+           "# Lines: %d\n"
+           "# Sets: %d\n\n",
+           (cacheSize * bpl * ways) / 1024, //calculate cache size and convert to kb
+           bpl,                             //bytes per line
+           cacheSize * ways,                //number of lines
+           cacheSize);                      //number of sets
+}

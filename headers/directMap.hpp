@@ -15,6 +15,12 @@ public:
     //called on every read access to the cache
     void read(uint32_t address);
 
+    //definition of the detailed print function (overriding the one in the base class)
+    void detailedPrint();
+
+    //implementation to return the cache type (overriding the one in the base class)
+    char *getType() { return "Direct Map"; };
+
 private:
     cacheEntry *entries; //pointer to the array of cache entries
 };

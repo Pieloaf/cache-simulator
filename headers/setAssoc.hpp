@@ -15,6 +15,12 @@ public:
     //called on every read access to the cache
     void read(uint32_t address);
 
+    //definition of the detailed print function (overriding the one in the base class)
+    void detailedPrint();
+
+    //implementation to return the cache type (overriding the one in the base class)
+    char *getType() { return "Two Way Set Associative"; };
+
 private:
     //number of ways in the cache
     //hard coded to 2 as the current implementation of LRU will not work for more than two ways
