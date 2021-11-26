@@ -4,7 +4,6 @@
 #define FULLY_ASSOC_HPP
 
 #include "cache.hpp"
-#define fullAssocMask 0xFFFFFFFC //mask to isolate the first 30 bits of the address
 
 class FullyAssociative : public Cache //inherits from Cache base class
 {

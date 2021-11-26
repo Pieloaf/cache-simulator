@@ -9,7 +9,6 @@
 #define cacheSize 16384     //cache size of 16KB (14 bit set number)
 #define setMask 0x0000FFFC  //mask to isolate 14 bits of the address following the first 2 bits
 #define wordMask 0x00000003 //mask to isolate the first 2 bits of the address
-#define tagMask 0xFFFF0000  //mask to isolate the last 16 bits of the address
 
 class Cache
 {

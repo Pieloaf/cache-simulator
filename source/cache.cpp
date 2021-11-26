@@ -10,15 +10,12 @@ Cache::Cache()
 //implementation of the parse address function
 void Cache::parseAddr(uint32_t address, uint16_t *tag, uint16_t *set, uint8_t *word)
 {
-    *tag = (address & tagMask) >> 16; //extract the tag from the address
-    *set = (address & setMask) >> 2;  //extract the set from the address
-    *word = (address & wordMask);     //extract the word from the address
+    *tag = address >> 16;            //extract the tag from the address
+    *set = (address & setMask) >> 2; //extract the set from the address
+    *word = (address & wordMask);    //extract the word from the address
 
     //print the breakdown of the address in hexadecimal format
-    printf("Address: %x | "
-           "Tag: %x | "
-           "Set: %x | "
-           "Byte Number: %x\n",
+    printf("Address: %x | Tag: %x | Set: %x | Byte Number: %x\n",
            address, *tag, *set, *word);
 }
 
@@ -39,6 +36,7 @@ void Cache::incMiss()
     //print the result of the read operation
     printReadResult((char *)"Miss");
 }
+
 int Cache::getHit() { return hit; }   //return the hit counter
 int Cache::getMiss() { return miss; } //return the miss counter
 

@@ -28,11 +28,9 @@ void FullyAssociative::read(uint32_t address)
 {
     bool found = false; //flag to indicate if the address is found in the cache
 
-    uint32_t tag = (address & fullAssocMask) >> 2; //extract the tag from the address
-    uint8_t word = address & wordMask;             //extract the word from the address
-    printf("Address: %x | "
-           "Tag: %x | "
-           "Byte Number: %x\n",
+    uint32_t tag = address >> 2;       //extract the tag from the address
+    uint8_t word = address & wordMask; //extract the word from the address
+    printf("Address: %x | Tag: %x | Byte Number: %x\n",
            address, tag, word);
 
     // itterate through the cache
