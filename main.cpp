@@ -66,6 +66,8 @@ void testCache(Cache *cache)
            (float)cache->getHit() / (float)readCount * 100, //calculate the hit rate
            cache->getHit(),                                 //print the number of hits
            cache->getMiss());                               //print the number of misses
+
+    delete cache; //delete the dynamically allocated cache
 }
 
 //main function
